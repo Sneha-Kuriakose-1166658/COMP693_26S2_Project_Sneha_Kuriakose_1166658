@@ -43,7 +43,7 @@ OPENAQ_BASE_URL = "https://api.openaq.org/v3"
 
 # OpenAQ now requires a free API key (register at https://explore.openaq.org/register)
 # Set it as an environment variable: export OPENAQ_API_KEY="your-key-here"
-OPENAQ_API_KEY = os.environ.get("OPENAQ_API_KEY", "ba23f8f00aff67c2cd1b9208c07fa88c1fa79a623354be73ef6a093151430660")
+OPENAQ_API_KEY = os.environ.get("OPENAQ_API_KEY", "")
 
 # ---------------------------------------------------------------------------
 # Air quality data source strategy
