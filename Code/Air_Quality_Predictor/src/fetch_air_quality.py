@@ -17,9 +17,7 @@ from src.utils import get_json_with_retries, chunk_date_range, haversine_km
 def _headers():
     if not config.OPENAQ_API_KEY:
         raise RuntimeError(
-            "OPENAQ_API_KEY is not set. Get a free key at "
-            "https://explore.openaq.org/register and run:\n"
-            "  export OPENAQ_API_KEY='your-key-here'"
+            
         )
     return {"X-API-Key": config.OPENAQ_API_KEY}
 
