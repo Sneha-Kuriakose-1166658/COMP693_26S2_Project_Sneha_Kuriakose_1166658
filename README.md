@@ -57,3 +57,52 @@ Took the separate weather and pollution datasets and turned them into one clean,
 Auckland: consistently "Good" air quality, with no variation across the whole dataset
 
 Delhi: a wide, varying range of risk levels — from Good all the way to Hazardous
+
+
+
+
+## Week 6 - Feature Wngineering
+
+#What Was Done This Week
+
+Gave the model more to actually learn from — up to this point, each row only had raw weather and pollution readings for a single hour, with no sense of context.
+
+--Time context — hour of day (encoded so late night and early morning are treated as close together, not opposite extremes), day of week, season, and a weekend flag — since pollution patterns differ a lot depending on the time of day.
+--Rolling averages — what pollution and weather looked like over the last 24 hours, not just the current instant.
+--Lag features — what the reading was exactly 24 hours earlier, since pollution levels are often similar to the same time the day before.
+--Tested — ran feature_engineering.py end-to-end for both cities via demo_week4.py, which prints a before/after comparison to confirm it works correctly.
+
+
+# Results
+
+# Delhi
+
+=== BEFORE: merged_clean.csv (week 5's output) ===
+Rows: 5161  |  Columns: 13
+Column names: ['datetime', 'temperature_2m', 'relative_humidity_2m', 'surface_pressure', 'wind_speed_10m', 'wind_direction_10m', 'precipitation', 'pm25', 'pm10', 'no2', 'source', 'aqi', 'risk_category']
+
+=== RUNNING feature_engineering.py ===
+Built 69 columns x 4640 rows -> 
+
+=== AFTER: features.csv ===
+Rows: 4640  |  Columns: 69
+
+56 new engineered feature columns added
+
+-- features.csv saved to data/processed/delhi/
+
+# Auckland
+
+=== BEFORE: merged_clean.csv (week 5's output) ===
+Rows: 4083  |  Columns: 11
+Column names: ['datetime', 'temperature_2m', 'relative_humidity_2m', 'surface_pressure', 'wind_speed_10m', 'wind_direction_10m', 'precipitation', 'pm25', 'source', 'aqi', 'risk_category']
+
+=== RUNNING feature_engineering.py ===
+Built 57 columns x 4042 rows -> 
+
+=== AFTER: features.csv ===
+Rows: 4042  |  Columns: 57
+
+46 new engineered feature columns added
+
+-- features.csv saved to data/processed/auckland/

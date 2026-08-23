@@ -1,3 +1,12 @@
 # Deliverables
 
-Add any deliverables that you have created or significantly contributed to during your project, such as reports, images, data (if allowed), planning documents, etc.
+#Project_Proposal
+
+the original project proposal  document submitted for examiner approval: problem statement, objectives, data sources, planned ML approach, and how the project meets the COMP693 novelty/scope requirements
+
+#Design
+system_architecture was attached in the project proposal document
+
+#Progress Evidence
+updates the code and readmefile upto week_5 progress and attach checkin ppt for week 5 with mentor showing progress till date
+

@@ -1,6 +1,6 @@
 """
 Week 4 demo script -- run this live to show feature engineering working on
-the real, merged & cleaned Delhi dataset from week 3.
+the real, merged & cleaned Delhi dataset from week 5.
 
 Usage:
     python demo_week4.py
@@ -12,7 +12,7 @@ import pandas as pd
 import config
 from src.feature_engineering import build_features
 
-print("=== BEFORE: merged_clean.csv (week 3's output) ===")
+print("=== BEFORE: merged_clean.csv (week 5's output) ===")
 before = pd.read_csv(config.MERGED_PATH)
 print(f"Rows: {len(before)}  |  Columns: {before.shape[1]}")
 print(f"Column names: {list(before.columns)}")
