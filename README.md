@@ -106,3 +106,62 @@ Rows: 4042  |  Columns: 57
 46 new engineered feature columns added
 
 -- features.csv saved to data/processed/auckland/
+
+
+
+## Week 7 - Trained models for both cities (Delhi and Auckland)
+
+#  TRAINING FOR: Delhi
+###
+Train: 4035 rows (2025-08-15 17:00:00 to 2026-05-31 23:00:00)
+Test:  605 rows (2026-06-01 00:00:00 to 2026-06-28 02:00:00)
+--- Class balance: TRAIN ---
+risk_category
+Unhealthy                       0.425
+Unhealthy (Sensitive Groups)    0.221
+Moderate                        0.193
+Very Unhealthy                  0.108
+Hazardous                       0.045
+Good                            0.009
+Name: proportion, dtype: float64
+--- Class balance: TEST ---
+risk_category
+Moderate                        0.478
+Unhealthy (Sensitive Groups)    0.377
+Unhealthy                       0.129
+Hazardous                       0.010
+Good                            0.003
+Very Unhealthy                  0.003
+Name: proportion, dtype: float64
+Using 59 features.
+Training LogisticRegression ...
+  LogisticRegression: F1(macro)=0.177  Precision(macro)=0.210  Recall(macro)=0.200
+Training RandomForest ...
+  RandomForest: F1(macro)=0.154  Precision(macro)=0.165  Recall(macro)=0.170
+Training XGBoost ...
+  XGBoost: F1(macro)=0.195  Precision(macro)=0.195  Recall(macro)=0.198
+>>> Best model by macro F1: XGBoost (F1=0.195)
+=== Model Comparison Table ===
+Model               F1 (macro)  Precision   Recall      
+LogisticRegression  0.177       0.210       0.200       
+RandomForest        0.154       0.165       0.170       
+XGBoost             0.195       0.195       0.198        <-- BEST
+
+#  TRAINING FOR: Auckland
+###
+Train: 3846 rows (2025-08-01 17:00:00 to 2026-05-31 23:00:00)
+Test:  196 rows (2026-06-01 00:00:00 to 2026-07-26 22:00:00)
+--- Class balance: TRAIN ---
+risk_category
+Good    1.0
+Name: proportion, dtype: float64
+--- Class balance: TEST ---
+risk_category
+Good    1.0
+Name: proportion, dtype: float64
+======================================================================
+NOTE: Auckland's entire dataset contains only ONE risk category (['Good']) across the whole collection window.
+Classification models require at least 2 classes to train meaningfully -- there's nothing to distinguish, so model training is skipped for this city rather than fit a model that trivially always predicts the same class.
+This is itself a real, reportable finding: Auckland's air quality stayed within a single risk band for the entire period, in contrast to a high-variance city like Delhi. It's direct evidence for why a two-city comparison is worthwhile.
+======================================================================
+Summary: Delhi produced a real, comparable 3-model result (saved to models/delhi/). Auckland's single-category dataset was correctly identified and training was skipped with an explanation rather than forcing a meaningless or crashing result.
