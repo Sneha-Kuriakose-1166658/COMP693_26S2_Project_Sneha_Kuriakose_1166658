@@ -44,10 +44,10 @@ Each pollutant is scored against its own EPA breakpoint table using linearinterp
 
 Took the separate weather and pollution datasets and turned them into one clean, usable dataset, ready for modelling.
 
-1.Merged — lined up weather and pollution readings onto the same hourly timeline (they didn't originally match up, since pollution readings landed at a different point in the hour than weather readings)
-2.Cleaned — filled small gaps, capped extreme outlier readings instead of deleting them, removed clearly broken sensor values
-3.Labeled — assigned a risk category (Good → Hazardous) to every row, using the AQI logic built the week before
-4.Tested — ran the full process end-to-end for two very different cities, to check it works consistently
+1.Merged : lined up weather and pollution readings onto the same hourly timeline (they didn't originally match up, since pollution readings landed at a different point in the hour than weather readings)
+2.Cleaned : filled small gaps, capped extreme outlier readings instead of deleting them, removed clearly broken sensor values
+3.Labeled : assigned a risk category (Good → Hazardous) to every row, using the AQI logic built the week before
+4.Tested : ran the full process end-to-end for two very different cities, to check it works consistently
 
 
 ##Results
@@ -64,9 +64,9 @@ Delhi: a wide, varying range of risk levels — from Good all the way to Hazardo
 
 Gave the model more to actually learn from — up to this point, each row only had raw weather and pollution readings for a single hour, with no sense of context.
 
---Time context — hour of day (encoded so late night and early morning are treated as close together, not opposite extremes), day of week, season, and a weekend flag — since pollution patterns differ a lot depending on the time of day.
---Rolling averages — what pollution and weather looked like over the last 24 hours, not just the current instant.
---Lag features — what the reading was exactly 24 hours earlier, since pollution levels are often similar to the same time the day before.
+--Time context : hour of day (encoded so late night and early morning are treated as close together, not opposite extremes), day of week, season, and a weekend flag — since pollution patterns differ a lot depending on the time of day.
+--Rolling averages : what pollution and weather looked like over the last 24 hours, not just the current instant.
+--Lag features : what the reading was exactly 24 hours earlier, since pollution levels are often similar to the same time the day before.
 --Tested — ran feature_engineering.py end-to-end for both cities via demo_week4.py, which prints a before/after comparison to confirm it works correctly.
 
 
@@ -104,7 +104,7 @@ Rows: 4042  |  Columns: 57
 
 -- features.csv saved to data/processed/auckland/
 
-## Week 7 - Trained models for both cities (Delhi and Auckland)
+## Week 7 - Trained models for both cities (Delhi and Auckland), explainability, open meteo fallback added
 
 #  TRAINING FOR: Delhi
 ###
@@ -160,3 +160,15 @@ Classification models require at least 2 classes to train meaningfully -- there'
 This is itself a real, reportable finding: Auckland's air quality stayed within a single risk band for the entire period, in contrast to a high-variance city like Delhi. It's direct evidence for why a two-city comparison is worthwhile.
 ======================================================================
 Summary: Delhi produced a real, comparable 3-model result (saved to models/delhi/). Auckland's single-category dataset was correctly identified and training was skipped with an explanation rather than forcing a meaningless or crashing result.
+
+ --added Explainability : added a feature-importance report showing which features actually drive the trained model's predictions, instead of treating it as a black box.
+
+-- added Open-Meteo's Air Quality API as a second, model-based source that automatically fills in for any city with no nearby OpenAQ ground station
+
+--AQI cross-check : validated the project's own AQI calculation against this independent third-party source as a sanity check, rather than just trusting it.
+
+
+##  Week 8 -Built streamlit app 
+
+Built the actual app this week  with five tabs ,where you can see past predictions, get a live forecast, see why the model predicted what it did, compare Delhi and Auckland, and compare this project to MetService's pollen forecasting. Checked  options for live pollen data and found couldn't get for chosen cities, so built a comparison instead of a fake live one. Tested the whole app and fixed the bugs I found.
+
