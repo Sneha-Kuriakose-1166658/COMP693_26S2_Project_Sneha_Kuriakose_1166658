@@ -1,0 +1,357 @@
+{
+  "best_model": "XGBoost",
+  "city": "Dunedin",
+  "timezone": "Pacific/Auckland",
+  "pm25_breakpoint_version": "2024",
+  "split_date": "2026-06-29 22:00:00",
+  "train_rows": 6480,
+  "test_rows": 2137,
+  "train_start": "2025-10-02 18:00:00",
+  "train_end": "2026-06-29 21:00:00",
+  "test_start": "2026-06-29 22:00:00",
+  "test_end": "2026-09-26 22:00:00",
+  "class_order": [
+    "Good",
+    "Moderate",
+    "Unhealthy (Sensitive Groups)",
+    "Unhealthy",
+    "Very Unhealthy",
+    "Hazardous"
+  ],
+  "n_features": 54,
+  "results": {
+    "LogisticRegression": {
+      "f1_macro": 0.3622708165138202,
+      "precision_macro": 0.35414862914862916,
+      "recall_macro": 0.40590604002176056,
+      "f1_macro_all_labels": 0.24151387767588015,
+      "precision_macro_all_labels": 0.23609908609908611,
+      "recall_macro_all_labels": 0.2706040266811737,
+      "accuracy": 0.7716424894712214,
+      "n_test_classes_present": 4,
+      "confusion_matrix": [
+        [
+          1462,
+          367,
+          3,
+          0,
+          0,
+          0
+        ],
+        [
+          63,
+          182,
+          25,
+          0,
+          0,
+          0
+        ],
+        [
+          5,
+          23,
+          5,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "Good": {
+          "precision": 0.9555555555555556,
+          "recall": 0.7980349344978166,
+          "f1-score": 0.8697204045211184,
+          "support": 1832.0
+        },
+        "Moderate": {
+          "precision": 0.3181818181818182,
+          "recall": 0.674074074074074,
+          "f1-score": 0.4323040380047506,
+          "support": 270.0
+        },
+        "Unhealthy (Sensitive Groups)": {
+          "precision": 0.14285714285714285,
+          "recall": 0.15151515151515152,
+          "f1-score": 0.14705882352941177,
+          "support": 33.0
+        },
+        "Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "Very Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "Hazardous": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 0.7716424894712214,
+        "macro avg": {
+          "precision": 0.23609908609908611,
+          "recall": 0.2706040266811737,
+          "f1-score": 0.24151387767588015,
+          "support": 2137.0
+        },
+        "weighted avg": {
+          "precision": 0.8615821967249202,
+          "recall": 0.7716424894712214,
+          "f1-score": 0.8024814284138708,
+          "support": 2137.0
+        }
+      }
+    },
+    "RandomForest": {
+      "f1_macro": 0.3422723673792557,
+      "precision_macro": 0.36172784307045935,
+      "recall_macro": 0.33230935629953096,
+      "f1_macro_all_labels": 0.22818157825283714,
+      "precision_macro_all_labels": 0.24115189538030624,
+      "recall_macro_all_labels": 0.22153957086635398,
+      "accuracy": 0.8769302760879738,
+      "n_test_classes_present": 4,
+      "confusion_matrix": [
+        [
+          1777,
+          55,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          173,
+          97,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          26,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "Good": {
+          "precision": 0.9080224833929484,
+          "recall": 0.9699781659388647,
+          "f1-score": 0.9379783584059118,
+          "support": 1832.0
+        },
+        "Moderate": {
+          "precision": 0.5388888888888889,
+          "recall": 0.3592592592592593,
+          "f1-score": 0.4311111111111111,
+          "support": 270.0
+        },
+        "Unhealthy (Sensitive Groups)": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 33.0
+        },
+        "Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "Very Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "Hazardous": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 0.8769302760879738,
+        "macro avg": {
+          "precision": 0.24115189538030624,
+          "recall": 0.22153957086635398,
+          "f1-score": 0.22818157825283714,
+          "support": 2137.0
+        },
+        "weighted avg": {
+          "precision": 0.8465124892727569,
+          "recall": 0.8769302760879738,
+          "f1-score": 0.8585757382309923,
+          "support": 2137.0
+        }
+      }
+    },
+    "XGBoost": {
+      "f1_macro": 0.36602779582092093,
+      "precision_macro": 0.38583628312628704,
+      "recall_macro": 0.35445374413715025,
+      "f1_macro_all_labels": 0.24401853054728062,
+      "precision_macro_all_labels": 0.257224188750858,
+      "recall_macro_all_labels": 0.2363024960914335,
+      "accuracy": 0.8933083762283575,
+      "n_test_classes_present": 4,
+      "confusion_matrix": [
+        [
+          1790,
+          42,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          151,
+          119,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          29,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "classification_report": {
+        "Good": {
+          "precision": 0.9203084832904884,
+          "recall": 0.9770742358078602,
+          "f1-score": 0.9478422028064601,
+          "support": 1832.0
+        },
+        "Moderate": {
+          "precision": 0.6230366492146597,
+          "recall": 0.44074074074074077,
+          "f1-score": 0.5162689804772235,
+          "support": 270.0
+        },
+        "Unhealthy (Sensitive Groups)": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 33.0
+        },
+        "Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "Very Unhealthy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "Hazardous": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "accuracy": 0.8933083762283575,
+        "macro avg": {
+          "precision": 0.257224188750858,
+          "recall": 0.2363024960914335,
+          "f1-score": 0.24401853054728062,
+          "support": 2137.0
+        },
+        "weighted avg": {
+          "precision": 0.8676766666710962,
+          "recall": 0.8933083762283575,
+          "f1-score": 0.877791081081088,
+          "support": 2137.0
+        }
+      }
+    }
+  }
+}
