@@ -1,9 +1,6 @@
 """
 Explainability utilities: global feature importance and per-prediction SHAP
 explanations for the best saved model.
-
-Usage (standalone report):
-    python -m src.explainability
 """
 
 import sys

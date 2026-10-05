@@ -1,25 +1,3 @@
-"""
-Fetch historical air quality data (PM2.5, PM10, NO2) from the OpenAQ v3 API.
-
-IMPORTANT: As of the OpenAQ v3 API, a free API key is REQUIRED.
-Register at https://explore.openaq.org/register, then either:
-    export OPENAQ_API_KEY="your-key-here"
-or put it in a .env file (see .env.example) and load it before running.
-
-Docs: https://docs.openaq.org/
-
-Flow:
-    1. Find monitoring stations ("locations") near the target city coordinates.
-    2. For each location, list its sensors (one sensor per pollutant/parameter).
-    3. For each relevant sensor (pm25 / pm10 / no2), pull hourly measurements
-       for the requested date range.
-    4. Combine everything into one long dataframe, then pivot to wide format
-       (one column per pollutant) for merging with weather data.
-
-Usage:
-    python -m src.fetch_air_quality
-"""
-
 import sys
 import os
 import time
@@ -32,7 +10,6 @@ from src.utils import get_json_with_retries, chunk_date_range, haversine_km
 
 # OpenAQ v3 caps `limit` at 1000 per page. A 90-day chunk is 2160 hours, so a
 # fully-populated sensor needs 3 pages; the cap is a runaway guard, not a limit
-# we expect to reach.
 PAGE_LIMIT = 1000
 MAX_PAGES_PER_CHUNK = 20
 
@@ -132,16 +109,6 @@ def assess_ground_coverage(df, start_date, end_date):
     """Is this OpenAQ result actually usable for the requested window?
 
     Returns (usable, reason).
-
-    "Does a station exist nearby" is not the same question as "is there usable
-    ground data". Hamilton has two stations 0.7km and 2.7km away, both of which
-    stopped on 2025-12-03 -- so the existence check passed and the city was
-    trained on 2 months out of a 12-month window, with a Historical tab stuck
-    in 2025 and a forecast resting on a 10-month-old pollution baseline.
-
-    Both conditions below have to hold, because they catch different failures:
-    coverage catches a station that reports sporadically, staleness catches one
-    that reported well and then died.
     """
     if df is None or df.empty:
         return False, "no rows returned"
@@ -175,19 +142,7 @@ def get_sensors_for_location(location):
 
 
 def fetch_sensor_measurements(sensor_id, start_date, end_date):
-    """Pull hourly aggregated measurements for one sensor, paginated.
-
-    NOTE: the OpenAQ v3 API requires full RFC3339 datetime strings
-    (e.g. "2026-07-01T00:00:00Z"), not bare dates ("2026-07-01") -- passing
-    date-only strings returns a 422 Unprocessable Entity on every request.
-
-    A short delay between requests is added proactively (rather than only
-    reacting after a 429) since sustained bursts are what trip rate limits
-    in the first place.
-
-    Pagination continues until the server returns a page shorter than `limit`.
-    Do NOT reintroduce a meta.found check here -- see the comment at the break.
-    """
+    """Pull hourly aggregated measurements for one sensor, paginated.    """
     all_rows = []
     limit = PAGE_LIMIT
     for chunk_start, chunk_end in chunk_date_range(start_date, end_date, chunk_days=90):
@@ -220,16 +175,6 @@ def fetch_sensor_measurements(sensor_id, start_date, end_date):
 
             # Stop ONLY when the server returns a short page. A full page means
             # there may well be another one.
-            #
-            # The previous version also consulted meta.found, which looks like a
-            # count but is documented to come back as the STRING ">1000" once the
-            # result set exceeds one page. `isinstance(found, int)` was then False,
-            # `found` defaulted to 0, and `page * 1000 >= 0` was trivially true --
-            # so the loop broke after page 1 and kept only the first 1000 hours of
-            # every 90-day (2160-hour) chunk. That silently discarded ~40% of
-            # Delhi's history in contiguous, chunk-aligned blocks, including the
-            # start of stubble-burning season and peak winter smog, which is
-            # exactly where the Very Unhealthy / Hazardous hours live.
             if len(results) < limit:
                 break
             if page >= MAX_PAGES_PER_CHUNK:

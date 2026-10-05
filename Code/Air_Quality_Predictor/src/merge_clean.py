@@ -3,12 +3,8 @@ Merge Open-Meteo weather data with OpenAQ air quality data on datetime,
 clean missing values and outliers, and produce one tidy dataframe.
 
 Both sources are in UTC (see fetch_weather.py), which is what makes the join
-below valid. It used to join Open-Meteo local time against OpenAQ UTC, which
-silently offset every label from its own features -- by 5.5h for Delhi and by
-12-13h for the NZ cities, the latter varying with DST.
+below valid.
 
-Usage:
-    python -m src.merge_clean
 """
 
 import sys
@@ -49,23 +45,7 @@ def clean_weather(df):
 
 
 def clean_pollutants(df):
-    """Clean pollutant readings without destroying the extreme tail.
-
-    Outlier handling here used to be IQR winsorizing at q3 + 3*IQR, computed
-    over the WHOLE dataframe. That had two problems:
-
-      * it fit a cleaning parameter on train and test together, so test-period
-        statistics leaked into the training data, and
-      * for a heavy-tailed quantity like PM2.5 in Delhi it clipped away exactly
-        the extreme readings the Very Unhealthy and Hazardous classes are made
-        of -- removing the rare classes the model is being asked to predict.
-
-    A pollutant concentration is heavy-tailed by nature; being far above the
-    75th percentile is a real air quality event, not a data error. So only
-    physically impossible values are rejected now: negatives (a known sensor
-    failure mode) and readings above config.POLLUTANT_SANITY_CEILINGS, which
-    sit well above any concentration ever recorded at ground level.
-    """
+    """Clean pollutant readings without destroying the extreme tail. """
     df = df.copy()
     df = df.drop_duplicates(subset="datetime").sort_values("datetime")
     pollutant_cols = [c for c in ["pm25", "pm10", "no2"] if c in df.columns]
@@ -109,11 +89,6 @@ def clean_pollutants(df):
 
 def report_coverage(merged):
     """Print how much of the nominal hourly timeline actually survived.
-
-    Worth seeing on every run: a low number here is the signal that something
-    upstream is dropping data (it was 59% for Delhi while the OpenAQ paginator
-    was stopping after one page), and the size of the gaps determines how many
-    rows feature_engineering.py then has to drop for want of history.
     """
     if merged.empty:
         print("Coverage: no rows at all.")

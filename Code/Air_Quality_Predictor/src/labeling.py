@@ -1,22 +1,7 @@
 """
 Convert raw pollutant concentrations into an AQI value and a human-readable
 risk category, using the US EPA breakpoint tables.
-
-The overall AQI for a given hour is the MAXIMUM of the individual pollutant
-sub-indices (this mirrors how real-world AQI is reported).
-
-Two things here are easy to get wrong and are worth reading before editing:
-
-1. EPA's published tables have GAPS between bands (PM2.5 runs 0.0-12.0 then
-   12.1-35.4). That is not a typo in the table -- EPA's method truncates the
-   concentration to the table's own precision first, which makes the gaps
-   unreachable. Skipping that truncation step meant a reading of 12.05 matched
-   no band at all and returned NaN, so that pollutant silently dropped out of
-   the max() and the hour's AQI was understated whenever it was the driver.
-   (~0.3% of readings in the collected data.)
-
-2. The PM2.5 table was revised by EPA in 2024. Which one is in use is a
-   config switch, not a silent default -- see config.PM25_BREAKPOINT_VERSION.
+config.PM25_BREAKPOINT_VERSION.: to toggle it
 """
 
 import numpy as np
@@ -96,10 +81,7 @@ def pm25_breakpoints(version=None):
 
 
 # Risk categories as (upper_bound_inclusive, label), evaluated in order.
-# Expressed as upper bounds rather than EPA's printed (51, 100)-style ranges
-# because those ranges have the same gap problem as the concentration tables:
-# a lookup of 50.5 matched nothing, fell through to a bare "Hazardous" default,
-# and labelled a near-Good reading as the worst category on the scale.
+
 RISK_CATEGORY_BANDS = [
     (50, "Good"),
     (100, "Moderate"),
@@ -110,8 +92,6 @@ RISK_CATEGORY_BANDS = [
 ]
 
 # Canonical severity order. Used for label encoding and for every chart axis,
-# so a confusion matrix reads Good -> Hazardous instead of alphabetically
-# (which put "Hazardous" between "Good" and "Moderate").
 RISK_CATEGORY_ORDER = [label for _, label in RISK_CATEGORY_BANDS]
 
 

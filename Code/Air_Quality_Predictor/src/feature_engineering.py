@@ -1,28 +1,8 @@
 """
 Feature engineering: time-based features, rolling averages, and lag features.
 
-Three things in here are load-bearing and were each wrong at some point:
 
-1. Rolling/lag windows are measured in HOURS, not rows. The timeline has gaps
-   (station outages, API limits), so rolling(window=24) over raw rows averaged
-   whatever 24 records happened to sit next to each other -- in the worst case
-   spanning 46 days, under a column named pm25_roll_24h_mean. Everything here
-   is computed on a gap-filled hourly grid, so one row really is one hour.
 
-2. Pollutant-derived rolling features are shifted back an hour so they do NOT
-   include the current row. They used to, and risk_category is computed
-   directly from the current hour's pm25/pm10/no2 -- so those 8 features
-   carried the answer, diluted 1/24 and 1/168. train_models.py drops the raw
-   pollutants from the feature set, but that does nothing about averages of
-   them that include the present moment.
-
-3. Time-of-day and season come from LOCAL time, and seasons flip for southern
-   hemisphere cities. The join key is UTC (see fetch_weather.py), so reading
-   the hour straight off it placed Delhi midnight at 05:30 local time; and
-   hardcoding Dec-Feb as winter inverted every season label for the NZ cities.
-
-Usage:
-    python -m src.feature_engineering
 """
 
 import sys
@@ -141,8 +121,7 @@ def add_rolling_features(df, cols, windows_hours=(24, 24 * 7), shift_hours=0):
 
     shift_hours=0  -> window ends at the current hour (fine for weather)
     shift_hours=1  -> window ends one hour ago, excluding the current
-                      observation (required for anything the label is derived
-                      from; see the module docstring)
+                      observation 
     """
     df = df.copy().sort_values("datetime").reset_index(drop=True)
     cols = [c for c in cols if c in df.columns]

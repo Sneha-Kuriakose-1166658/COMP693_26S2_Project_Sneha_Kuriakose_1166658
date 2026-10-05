@@ -39,13 +39,7 @@ from src.explainability import global_feature_importance, explain_single_predict
 from src.fetch_pollen import get_pollen_forecast, get_call_budget_status, POLLEN_RISK_COLORS
 
 # How far behind config.END_DATE a city's pollution data may fall before the
-# forecast tab discloses it. END_DATE is already today-7 by design, so this is
-# measured against END_DATE, not against the current time -- see the comment at
-# the staleness check in the Forecast tab.
-#
-# Cities collecting normally sit at or slightly ahead of END_DATE, so nothing
-# is shown. It exists for the case where a city's data genuinely stops early,
-# which a reader of a forecast deserves to be told about.
+# forecast tab discloses it.
 STALE_POLLUTION_DAYS = 30
 
 RISK_COLORS = {
@@ -284,7 +278,7 @@ with tab_hist:
         if "datetime_local" not in hist_df.columns:
             st.error(
                 "This city's features.csv predates the timezone fix and has no "
-                "datetime_local column. Re-run: python run_pipeline.py"
+                "datetime_local column."
             )
             st.stop()
 
@@ -533,15 +527,7 @@ with tab_forecast:
 
                 # Staleness is measured against config.END_DATE -- the newest
                 # hour the pipeline is ALLOWED to collect -- not against now.
-                #
-                # END_DATE is date.today() - 7, because the archive APIs lag
-                # real time. So the freshest possible reading is always about a
-                # week old, and an earlier version of this check compared
-                # against now with a 48-hour threshold: it fired on every
-                # forecast for every city, including moments after a clean run,
-                # and told the user to re-run the pipeline, which could not
-                # have changed the outcome. Delhi reads 6.7 days old against
-                # now but 0.9 days AHEAD of END_DATE: as fresh as it can be.
+               
                 last_reading = merged_hist["datetime"].max()
                 days_behind = (pd.Timestamp(config.END_DATE) - last_reading).days
                 if days_behind > STALE_POLLUTION_DAYS:
@@ -702,9 +688,6 @@ with tab_compare:
         st.plotly_chart(fig2, width="stretch")
 
         # Written from the data rather than hardcoded to the original
-        # Delhi/Auckland pair, which went stale as soon as the four extra NZ
-        # cities were collected: the prose named two cities while the charts
-        # above it iterated over all six.
         ranked = sorted(available.items(), key=lambda kv: kv[1]["mean_aqi"], reverse=True)
         dirtiest, dirtiest_s = ranked[0]
         cleanest, cleanest_s = ranked[-1]
@@ -875,3 +858,4 @@ with tab_allergy:
             "outlook above -- two genuinely complementary environmental "
             "health signals MetService's pollen forecast alone doesn't cover."
         )
+        

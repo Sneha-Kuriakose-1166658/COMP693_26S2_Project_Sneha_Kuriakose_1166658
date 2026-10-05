@@ -2,31 +2,6 @@
 Cross-check our own EPA-breakpoint AQI calculation (labeling.py) against
 Open-Meteo's independently-computed us_aqi field, for the same city and sample
 window.
-
-This does NOT replace labeling.py -- it validates it.
-
-Read the two comparisons it reports separately, because they are measuring
-different things:
-
-  instantaneous -- our AQI from each hour's raw concentration, against their
-      us_aqi for the same hour. This is what the pipeline actually labels on,
-      and it is EXPECTED to disagree: EPA's PM breakpoints are defined over
-      24-hour averages, and Open-Meteo applies that averaging (NowCast) while
-      labeling.py applies the table to a single hourly reading. An MAE of ~35
-      AQI points here is that methodological difference, not a broken table.
-
-  averaged -- our AQI from a trailing 24h mean concentration, against the same
-      us_aqi. This one isolates the breakpoint arithmetic from the averaging
-      choice, so it is the comparison that actually tests labeling.py. The
-      threshold check below is applied to THIS number.
-
-The earlier version reported only the instantaneous figure, tripped its own
-"difference is fairly large" warning at MAE 36.18, and the ReadMe cited those
-same numbers as evidence the labeling logic was correct. Both halves of that
-were defensible on their own and contradictory together.
-
-Usage:
-    python -m src.validate_aqi_crosscheck
 """
 
 import sys
@@ -42,29 +17,13 @@ import config
 from src.labeling import compute_aqi_row
 from src.fetch_air_quality_openmeteo import fetch_air_quality_openmeteo_history
 
-# The verdict rests on an invariant rather than on a tuned error threshold.
-#
-# Open-Meteo's us_aqi is the max over roughly six pollutant sub-indices (PM2.5,
-# PM10, NO2, O3, SO2, CO). labeling.py takes the max over the three pollutants
-# this project collects. A max over a subset cannot exceed a max over the
-# superset, so OUR AQI MUST SIT AT OR BELOW THEIRS. If the breakpoint tables
-# were wrong, that invariant would break immediately and in one direction.
-#
-# MAE and correlation are reported for context but are NOT the gate: measured
-# over three 14-day Delhi windows (Jan / Jul / Sep 2026) they ranged from
-# MAE 1.4 / corr 0.998 to MAE 31 / corr 0.875, moving with which pollutant
-# happened to drive Open-Meteo's max rather than with anything about our math.
-# Invariant violations stayed under 8% of hours in all three.
-#
-# The tolerance absorbs the one legitimate source of small overshoot: EPA
-# NowCast weights recent hours more heavily than the plain trailing mean used
-# here, which diverges while concentrations are changing fast.
+
 LOWER_BOUND_TOLERANCE_AQI = 10
 MAX_SHARE_VIOLATING = 0.15
 
 
 def _sample_window(sample_days):
-    """Pick a window that overlaps the data we actually collected.
+    """Pick a window that overlaps the data actually collected.
 
     config.END_DATE is derived from date.today(), so on its own it drifted past
     the end of the collected data -- the saved report covered 2026-08-15 to

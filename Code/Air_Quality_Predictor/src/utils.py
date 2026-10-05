@@ -7,14 +7,6 @@ import requests
 
 def get_json_with_retries(url, params=None, headers=None, max_retries=6, backoff=3.0):
     """GET a URL and return parsed JSON, retrying on transient failures / rate limits.
-
-    Client errors other than 429 (e.g. 400/401/404/422) are NOT retried --
-    those mean the request itself is malformed or unauthorized, and retrying
-    identical bad params 4 times just wastes time before failing anyway.
-
-    429 (rate limited) gets its own longer, exponential backoff and honors
-    the server's `Retry-After` header when present, since a few seconds is
-    rarely enough to clear a per-minute rate window.
     """
     last_err = None
     for attempt in range(max_retries):
@@ -73,18 +65,6 @@ def chunk_date_range(start_date, end_date, chunk_days=30):
 
 def derive_split_date(datetimes, test_months=3):
     """Chronological train/test split point derived from the DATA, not the clock.
-
-    Returns the timestamp at which the test period begins: the most recent
-    `test_months` (counted as 30 days each) of whatever data actually exists.
-
-    This exists because the split used to be `date.today() - 7 - 90 days`.
-    Nothing about it referred to the dataset, so the held-out window silently
-    shrank as the data aged -- the saved Delhi model was evaluated on 461 rows
-    (~19 days) while the ReadMe claimed "the last 3 months" -- and once the data
-    was more than ~97 days old the test set became empty altogether.
-
-    If the data spans less than ~4x the requested test window, the test period
-    is capped at 25% of the span so there is always something left to train on.
     """
     import pandas as pd
 

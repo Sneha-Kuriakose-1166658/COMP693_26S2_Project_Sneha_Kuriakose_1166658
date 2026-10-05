@@ -3,23 +3,6 @@ Pollen forecasting via the Atmospore API, with a locally-enforced daily call
 budget and on-disk caching -- so a single free-tier API key (100 calls/day,
 shared across EVERY city this app supports, not per-city) can safely back a
 multi-city Streamlit app that reruns its whole script on every widget click.
-
-Strategy, in priority order, every time pollen data is requested for a city:
-  1. If we already fetched that city's forecast TODAY (UTC), reuse it --
-     Atmospore's own data only updates once a day, so re-fetching within
-     the same day buys nothing and just burns quota for no benefit.
-  2. Otherwise, check the shared call ledger (one counter for the whole
-     API key, reset at UTC midnight). If there's budget left, make one
-     live call, cache the result, and increment the ledger.
-  3. If the budget is exhausted (or the live call itself gets a 429), fall
-     back to the most recent cache for that city, however old it is,
-     clearly labeled as stale so the UI can say so honestly.
-  4. If there is no cache at all yet for that city, report the limit
-     plainly instead of crashing -- the caller decides how to degrade
-     (e.g. fall back to static seasonal info).
-
-get_pollen_forecast() never raises. It always returns a status dict the
-caller can render directly.
 """
 
 import os

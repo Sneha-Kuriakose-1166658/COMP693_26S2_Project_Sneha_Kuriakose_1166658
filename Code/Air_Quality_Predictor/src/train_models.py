@@ -4,21 +4,6 @@ chronologically-split dataset. Selects the best model by macro F1-score on
 the held-out (most recent) test period, and saves the winner + supporting
 artifacts (scaler, label encoder, feature list) for the Streamlit app.
 
-Two reporting details worth knowing before reading the numbers:
-
-  * The split point is derived from the DATA, not from date.today(), and is
-    written into model_comparison.json. The old wall-clock split silently
-    shrank the "last 3 months" test window to 19 days as the data aged, and
-    the app displayed a freshly-recomputed split date that did not match the
-    one the saved model had been trained with.
-
-  * f1_macro averages only over classes that are actually present in the test
-    set. Averaging over all six when one has zero test rows folds a guaranteed
-    0.0 into the mean, which understated every model by ~0.04. The all-six
-    figure is still reported as f1_macro_all_labels for continuity.
-
-Usage:
-    python -m src.train_models
 """
 
 import sys
@@ -47,10 +32,6 @@ from src.utils import derive_split_date
 # Columns excluded from the feature set. The raw pollutants and aqi are the
 # label's own ingredients; datetime_local is a display column; hour /
 # day_of_week / month are superseded by their cyclical encodings.
-#
-# Note that excluding pm25/pm10/no2 here is NOT sufficient on its own to
-# prevent leakage -- rolling averages OF those columns have to exclude the
-# current hour too, which is handled in feature_engineering.py.
 NON_FEATURE_COLS = {
     "datetime", "datetime_local", "risk_category", "aqi",
     "pm25", "pm10", "no2", "hour", "day_of_week", "month",
@@ -132,9 +113,7 @@ def build_models():
 
 def train_and_evaluate(X_train, y_train, X_test, y_test, class_names):
     all_labels = list(range(len(class_names)))
-    # Classes with at least one row in the test set. Macro-averaging over a
-    # class with zero support contributes a guaranteed 0.0 to the mean, which
-    # is a property of the split, not of the model.
+    # Classes with at least one row in the test set
     present_labels = sorted(set(np.unique(y_test).tolist()))
     absent = [class_names[i] for i in all_labels if i not in present_labels]
     if absent:

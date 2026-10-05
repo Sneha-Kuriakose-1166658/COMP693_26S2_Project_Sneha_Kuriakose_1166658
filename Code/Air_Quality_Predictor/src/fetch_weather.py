@@ -1,16 +1,6 @@
 """
 Fetch historical hourly weather data from the Open-Meteo Archive API.
 
-Open-Meteo's archive endpoint is free and requires no API key.
-Docs: https://open-meteo.com/en/docs/historical-weather-api
-
-All timestamps are requested and returned in UTC (config.TIMEZONE_FETCH), the
-same clock OpenAQ reports in, so merge_clean.py can join the two sources on
-`datetime` safely. Local-clock features are derived later in
-feature_engineering.py from config.CITIES[city]["tz"].
-
-Usage:
-    python -m src.fetch_weather
 """
 
 import sys
@@ -56,16 +46,6 @@ def fetch_weather_history(lat, lon, start_date, end_date, hourly_vars):
 def fetch_weather_forecast(lat, lon, hourly_vars, forecast_days=5, past_days=8):
     """Fetch upcoming forecast weather (for the app's Forecast view), preceded
     by `past_days` of recent real observations.
-
-    The past window matters: the model's 24h and 7d rolling weather features
-    need the hours immediately BEFORE the forecast horizon to be meaningful.
-    Splicing in the tail of merged_clean.csv instead doesn't work -- that file
-    is only as fresh as the last pipeline run, so the "24h mean" at the start
-    of the horizon ended up averaging across a multi-week hole in the timeline.
-    Open-Meteo's forecast endpoint serves recent past hours from the same
-    endpoint on the same grid, which gives one genuinely contiguous series.
-
-    Returns UTC timestamps, matching fetch_weather_history.
     """
     params = {
         "latitude": lat,
