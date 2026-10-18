@@ -68,7 +68,6 @@ Time: 3 hours
 What has not gone as expected?
  Found that the PM2.5 breakpoints in use are outdated (pre-2024 EPA standard), and that a fallback feature described in the code's documentation isn't actually implemented yet
 
-
 ## Week 5: 10 August 2026 – 16 August 2026
 
 #Tasks Completed and Time Spent on each Task 
